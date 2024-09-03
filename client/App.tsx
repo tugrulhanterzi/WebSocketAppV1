@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 const App = () => {
-  const [message, setMessage] = useState<string>(""); // Gelen mesajı saklamak için state
+  const [sensorData, setSensorData] = useState({
+    temperature: "",
+    humidity: "",
+    light: "",
+    relay1: "",
+    relay2: "",
+  });
+
   const ws = useRef<WebSocket | null>(null); // ws referansını useRef ile tanımlıyoruz
 
   // WebSocket bağlantısını tanımlıyoruz
@@ -16,7 +23,8 @@ const App = () => {
 
     ws.current.onmessage = (event) => {
       console.log("Message from server:", event.data);
-      setMessage(event.data); // Gelen mesajı state'e kaydediyoruz
+      const data = JSON.parse(event.data); // Gelen veriyi JSON formatında parse ediyoruz
+      setSensorData(data); // Gelen veriyi state'e kaydediyoruz
     };
 
     ws.current.onclose = () => {
@@ -35,15 +43,12 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>Server Message: {message}</Text>
-      <Button
-        title="Send Message"
-        onPress={() => {
-          if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-            ws.current.send("Hello again!");
-          }
-        }}
-      />
+      <Text style={styles.title}>Sensor Data</Text>
+      <Text style={styles.data}>Temperature: {sensorData.temperature} °C</Text>
+      <Text style={styles.data}>Humidity: {sensorData.humidity} %</Text>
+      <Text style={styles.data}>Light: {sensorData.light} lux</Text>
+      <Text style={styles.data}>Relay 1: {sensorData.relay1}</Text>
+      <Text style={styles.data}>Relay 2: {sensorData.relay2}</Text>
     </View>
   );
 };
@@ -55,9 +60,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
-  message: {
-    fontSize: 18,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
     marginBottom: 20,
+  },
+  data: {
+    fontSize: 18,
+    marginBottom: 10,
   },
 });
 
