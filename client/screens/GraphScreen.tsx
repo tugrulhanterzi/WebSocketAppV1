@@ -1,73 +1,63 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
-import { LineChart } from "react-native-chart-kit";
-
-const screenWidth = Dimensions.get("window").width;
+import React, { useState, useEffect, useRef } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import TemperatureGraph from "../components/molecules/TemperatureGraph";
 
 const GraphScreen = () => {
-  const [testData, setTestData] = useState<number[]>([20, 45, 28, 80, 99, 43]);
+  const [temperatureData, setTemperatureData] = useState<number[]>([]);
+  const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    // Simulate data update every 2 seconds
-    const interval = setInterval(() => {
-      setTestData((prevData) => [...prevData.slice(-5), Math.random() * 100]);
-    }, 2000);
+    ws.current = new WebSocket("ws://192.168.1.84:8080");
 
-    return () => clearInterval(interval);
+    ws.current.onopen = () => {
+      console.log("Connected to the WebSocket server");
+      ws.current?.send("Hello, server!");
+    };
+
+    ws.current.onmessage = (event) => {
+      console.log("Message from server:", event.data);
+
+      try {
+        const data = JSON.parse(event.data);
+
+        const temperature = parseFloat(data.temperature);
+        if (!isNaN(temperature)) {
+          setTemperatureData((prevData) => [
+            ...prevData.slice(-9),
+            temperature,
+          ]);
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    };
+
+    ws.current.onclose = () => {
+      console.log("Disconnected from WebSocket server");
+    };
+
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Test Graph Screen</Text>
-      <LineChart
-        data={{
-          labels: testData.map((_, index) => `${index + 1}`),
-          datasets: [
-            {
-              data: testData,
-            },
-          ],
-        }}
-        width={screenWidth - 40}
-        height={220}
-        yAxisSuffix="°C"
-        chartConfig={{
-          backgroundColor: "#1E2923",
-          backgroundGradientFrom: "#08130D",
-          backgroundGradientTo: "#1F4037",
-          decimalPlaces: 2,
-          color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: "#ffa726",
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-      />
-    </View>
+    <ScrollView style={styles.scrollView}>
+      <TemperatureGraph data={temperatureData} />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#282C34",
-  },
-  title: {
-    fontSize: 24,
-    color: "#61DAFB",
-    marginBottom: 20,
   },
 });
 
