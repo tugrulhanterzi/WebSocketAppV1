@@ -38,6 +38,7 @@ This project demonstrates a WebSocket-based application designed to communicate 
    ```bash
    git clone https://github.com/tugrulhanterzi/WebSocketAppV1.git
    cd WebSocketAppV1
+   cd client
    ```
 
 2. **Install Dependencies**
