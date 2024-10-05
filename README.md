@@ -9,7 +9,6 @@ This project demonstrates a WebSocket-based application designed to communicate 
 - [Running the Project](#running-the-project)
 - [Usage](#usage)
 - [Future Plans](#future-plans)
-- [License](#license)
 
 ## Features
 - Connects to a WebSocket server to fetch real-time data from sensors.
