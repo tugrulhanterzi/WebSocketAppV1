@@ -51,10 +51,10 @@ This project demonstrates a WebSocket-based application designed to communicate 
    ```
 
 4. **Configure the WebSocket URL**
-   - Open the `src/config.js` file.
+   - Open the `screens/SensorScreen.tsx` file.
    - Update the WebSocket URL to point to your WebSocket server.
    ```js
-   export const WEBSOCKET_URL = 'ws://your-websocket-server-url';
+   ws.current = new WebSocket("ws://192.168.1.24:8080");
    ```
 
 ## Running the Project
