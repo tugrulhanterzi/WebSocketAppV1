@@ -54,7 +54,7 @@ This project demonstrates a WebSocket-based application designed to communicate 
    - Open the `screens/SensorScreen.tsx` file.
    - Update the WebSocket URL to point to your WebSocket server.
    ```js
-   ws.current = new WebSocket("ws://192.168.1.24:8080");
+   ws.current = new WebSocket("ws://your-websocket-server-ip");
    ```
 
 ## Running the Project
