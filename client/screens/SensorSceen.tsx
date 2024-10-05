@@ -6,36 +6,39 @@ const SensorScreen = () => {
     temperature: "",
     humidity: "",
     light: "",
-    relay1: "",
-    relay2: "",
   });
 
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://192.168.1.84:8080");
+    // Pico W'nin IP adresini ve port numarasını doğru şekilde kullanın
+    ws.current = new WebSocket("ws://192.168.1.24:8080");
 
     ws.current.onopen = () => {
-      console.log("Connected to the WebSocket server");
-      ws.current?.send("Hello, server!");
+      console.log("WebSocket sunucusuna bağlanıldı");
+      ws.current?.send("Merhaba sunucu!"); // İstemci bağlantı mesajı gönderir
     };
 
     ws.current.onmessage = (event) => {
-      console.log("Message from server:", event.data);
-      const data = JSON.parse(event.data);
-      setSensorData(data);
+      console.log("Sunucudan gelen veri:", event.data); // Gelen ham veriyi kontrol edin
+      try {
+        const data = JSON.parse(event.data); // Gelen veriyi JSON formatına çevir
+        setSensorData(data); // Sensör verisini state içine set et
+      } catch (error) {
+        console.error("Veri çözümleme hatası:", error); // JSON parse hatası olursa yakala
+      }
     };
 
     ws.current.onclose = () => {
-      console.log("Disconnected from WebSocket server");
+      console.log("WebSocket bağlantısı kapatıldı");
     };
 
     ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error("WebSocket hatası:", error);
     };
 
     return () => {
-      ws.current?.close();
+      ws.current?.close(); // Bileşen kapanırken WebSocket bağlantısını kapat
     };
   }, []);
 
@@ -45,23 +48,23 @@ const SensorScreen = () => {
       <View style={styles.grid}>
         <View style={styles.card}>
           <Text style={styles.label}>Temperature</Text>
-          <Text style={styles.value}>{sensorData.temperature} °C</Text>
+          <Text style={styles.value}>
+            {sensorData.temperature
+              ? `${sensorData.temperature} °C`
+              : "Loading..."}
+          </Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.label}>Humidity</Text>
-          <Text style={styles.value}>{sensorData.humidity} %</Text>
+          <Text style={styles.value}>
+            {sensorData.humidity ? `${sensorData.humidity} %` : "Loading..."}
+          </Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.label}>Light Intensity</Text>
-          <Text style={styles.value}>{sensorData.light} lux</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.label}>Relay 1 Status</Text>
-          <Text style={styles.value}>{sensorData.relay1}</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.label}>Relay 2 Status</Text>
-          <Text style={styles.value}>{sensorData.relay2}</Text>
+          <Text style={styles.value}>
+            {sensorData.light ? `${sensorData.light} lux` : "Loading..."}
+          </Text>
         </View>
       </View>
     </View>
