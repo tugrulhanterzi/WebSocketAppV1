@@ -75,6 +75,3 @@ This project demonstrates a WebSocket-based application designed to communicate 
 ## Future Plans
 - Add support for Bluetooth communication with Raspberry Pi Pico W.
 - Add integration with a cloud service for data storage and analysis.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
