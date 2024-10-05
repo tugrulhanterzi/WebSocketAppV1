@@ -5,8 +5,8 @@ import dht
 import usocket as socket  # MicroPython'da 'usocket' olarak geçer
 
 # Wi-Fi bağlantı bilgileri
-SSID = "tailorr"
-PASSWORD = "tugrul23"
+SSID = "WIFI-NAME"
+PASSWORD = "WIFI-PASSWORD"
 
 # LDR sensörü (analog)
 ldr_pin = machine.ADC(26)  # GP26 pinine bağlı (ADC0)
