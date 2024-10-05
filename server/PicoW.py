@@ -59,11 +59,11 @@ def read_dht():
 
 # WebSocket sunucusunu başlatma
 def websocket_server(ip):
-    addr = socket.getaddrinfo(ip, 8084)[0][-1]  # 8081 portunu kullan
+    addr = socket.getaddrinfo(ip, 8080)[0][-1]  # 8081 portunu kullan
     s = socket.socket()
     s.bind(addr)
     s.listen(1)
-    print(f"WebSocket sunucusu {ip}:8084 üzerinde başlatıldı, istemcilerin bağlanmasını bekliyor...")
+    print(f"WebSocket sunucusu {ip}:8080 üzerinde başlatıldı, istemcilerin bağlanmasını bekliyor...")
 
     while True:
         cl, addr = s.accept()
